@@ -38,13 +38,13 @@ h1{font-family:var(--display);font-weight:700;font-size:29px;line-height:1.1;mar
 .pip{flex:none;width:16px;height:16px;background:var(--or-sombre);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
 .pip.oui,.pip.bof,.pip.non{background:var(--or)}
 .pip.now{background:var(--or);transform:scale(1.25)}
-.card{position:relative;flex:1;min-height:360px;display:flex;flex-direction:column;background:var(--surface);border:2px solid var(--oui);border-radius:3px;box-shadow:6px 6px 0 var(--oui);overflow:hidden;width:calc(100% - 6px);text-align:left;padding:11px 11px 0;transition:transform .36s cubic-bezier(.4,0,.7,.4),opacity .36s}
+.card{position:relative;flex:1;min-height:250px;display:flex;flex-direction:column;background:var(--surface);border:2px solid var(--oui);border-radius:3px;box-shadow:6px 6px 0 var(--oui);overflow:hidden;width:calc(100% - 6px);text-align:left;padding:11px 11px 0;transition:transform .36s cubic-bezier(.4,0,.7,.4),opacity .36s}
 .card.in{animation:in .28s ease-out}
 @keyframes in{from{transform:translateY(16px) scale(.97);opacity:0}}
 .card.oui{transform:translateX(120%) rotate(14deg);opacity:0}
 .card.bof{transform:translateY(-110%) rotate(-3deg);opacity:0}
 .card.non{transform:translateX(-120%) rotate(-14deg);opacity:0}
-.photo{position:relative;flex:1;min-height:170px;border-radius:3px;overflow:hidden}
+.photo{position:relative;flex:1;min-height:120px;border-radius:3px;overflow:hidden}
 .photo svg,.photo img{position:absolute;inset:0;width:100%;height:100%;max-width:100%}
 .photo img{object-fit:cover}
 .sheet .photo img{object-fit:contain;background:var(--on-btn)}
