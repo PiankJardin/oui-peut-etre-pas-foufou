@@ -73,7 +73,10 @@ h1{font-family:var(--display);font-weight:700;font-size:29px;line-height:1.1;mar
 .back{align-self:center;color:var(--ink);font-size:14px;font-weight:600;padding:6px 10px;text-decoration:underline;text-underline-offset:3px}
 .group{display:grid;gap:9px;background:var(--surface);border:2px solid var(--line);border-radius:3px;padding:14px}
 .group h2{font-family:var(--display);font-weight:700;font-size:27px;margin:0;display:flex;align-items:center;gap:9px}
-.dot{width:22px;height:20px;clip-path:path("M11 19C4 13.5 1 10 1 6a5 5 0 0 1 10-1.5A5 5 0 0 1 21 6c0 4-3 7.5-10 13z")}
+.plier{display:flex;align-items:center;gap:9px;width:100%;padding:4px 0;font:inherit;text-align:left}
+.chev{margin-left:auto;font-family:var(--body);font-size:24px;line-height:1;transition:transform .2s}
+.plier[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.dot{flex:none;width:22px;height:20px;clip-path:path("M11 19C4 13.5 1 10 1 6a5 5 0 0 1 10-1.5A5 5 0 0 1 21 6c0 4-3 7.5-10 13z")}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .mini{background:var(--soft);border-radius:4px;overflow:hidden;text-align:left;padding:6px 6px 0;display:flex;flex-direction:column}
 .mini .photo{flex:none;height:104px;min-height:0}
@@ -136,7 +139,7 @@ const KEY="choix-annonces-v1";
 const API="https://zhhcvkzxlmcylakqgbuu.supabase.co/rest/v1/choix_annonces";
 const CLE="sb_publishable_Bh515rwNo1j3p8aosFfGaQ_S77_LDcG";
 const HD={apikey:CLE,"Content-Type":"application/json"};
-let attente={},envoi=false,relance=false;
+let attente={},envoi=false,relance=false,ouvert={};
 try{attente=JSON.parse(localStorage.getItem(KEY+"-attente")||"{}")}catch(e){}
 let choices={},order=[],view="trier",busy=false;
 try{const s=JSON.parse(localStorage.getItem(KEY)||"{}");choices=s.choices||{};order=s.order||[]}catch(e){}
@@ -190,9 +193,10 @@ function pick(a,c){
 function renderSel(){
   const groups=Object.keys(LABEL).map(k=>{
     const list=ADS.filter(a=>choices[a.id]===k);
-    return `<section class="group"><h2><span class="dot" style="background:${COLOR[k]}"></span>${LABEL[k]} <span class="count">${list.length}</span></h2>${list.length?`<div class="grid">${list.map(a=>`<button class="mini" data-id="${a.id}">${photo(a)}<span>${a.title}<em>${a.price}</em></span></button>`).join("")}</div>`:`<p class="empty">Rien ici pour l'instant.</p>`}</section>`;
+    return `<section class="group"><h2><button class="plier" data-k="${k}" aria-expanded="${!!ouvert[k]}"><span class="dot" style="background:${COLOR[k]}"></span>${LABEL[k]} <span class="count">${list.length}</span><span class="chev" aria-hidden="true">▾</span></button></h2>${!ouvert[k]?"":list.length?`<div class="grid">${list.map(a=>`<button class="mini" data-id="${a.id}">${photo(a)}<span>${a.title}<em>${a.price}</em></span></button>`).join("")}</div>`:`<p class="empty">Rien ici pour l'instant.</p>`}</section>`;
   }).join("");
   $("view").innerHTML=groups;
+  document.querySelectorAll(".plier").forEach(b=>b.onclick=()=>{ouvert[b.dataset.k]=!ouvert[b.dataset.k];renderSel()});
   document.querySelectorAll(".mini").forEach(b=>b.onclick=()=>openSheet(ADS.find(a=>a.id===b.dataset.id),false));
 }
 function openSheet(a,zoomOnly){
