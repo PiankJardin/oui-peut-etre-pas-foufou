@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Oui, peut-être, pas foufou</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oleo+Script:wght@700&family=Barlow+Condensed:wght@400;500;600;700&display=swap">
+<style>
+/* Une annonce à la fois, comme un paquet de cartes qu'on trie avec le pouce. */
+:root{
+  color-scheme:dark; --bg:#121012; --surface:#2d1826; --soft:#4a2539; --ink:#ffeef3; --muted:#f0bfd2; --line:#8a4567; --on-accent:#170d0e; --cerise:#d81f34; --or:linear-gradient(135deg,#fff176,#ffb700 55%,#ffe600); --or-sombre:#a87800; --dot:rgba(216,31,52,.6); --dot2:rgba(251,239,217,.2);
+  --oui:#ff4f97; --bof:#ffc0d8; --non:#4fb8ad; --on-btn:#170d0e;
+  --display:"Oleo Script","Brush Script MT",cursive; --body:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+}
+html,body{height:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.etat{position:fixed;left:16px;right:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--bof);color:var(--on-btn);font-weight:600;text-align:center;border-radius:4px;padding:9px 12px}
+body{background-color:var(--bg);background-image:radial-gradient(circle,var(--dot) 5px,transparent 5.5px),radial-gradient(circle,var(--dot2) 5px,transparent 5.5px);background-size:36px 36px;background-position:0 0,18px 18px;color:var(--ink);font-family:var(--body);font-size:17px;overflow-x:hidden}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.app{max-width:460px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:12px;padding-block:14px 18px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.note{font-size:13px;color:var(--muted);text-align:center;background:var(--surface);border-radius:4px;padding:6px 10px;margin:0}
+h1{font-family:var(--display);font-weight:700;font-size:29px;line-height:1.1;margin:0;padding:11px 34px;text-wrap:balance;text-align:center;background:var(--oui);color:var(--on-accent);clip-path:polygon(0 0,100% 0,calc(100% - 16px) 50%,100% 100%,0 100%,16px 50%)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--surface);border:2px solid var(--oui);border-radius:4px;padding:4px}
+.tab{padding:9px 8px;border-radius:2px;font-weight:700;font-size:17px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--oui);color:var(--on-accent)}
+.count{font-variant-numeric:tabular-nums}
+#view{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0}
+.pips{display:flex;flex-wrap:wrap;gap:4px 5px;justify-content:center}
+.pip{flex:none;width:16px;height:16px;background:var(--or-sombre);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.pip.oui,.pip.bof,.pip.non{background:var(--or)}
+.pip.now{background:var(--or);transform:scale(1.25)}
+.card{position:relative;flex:1;min-height:360px;display:flex;flex-direction:column;background:var(--surface);border:2px solid var(--oui);border-radius:3px;box-shadow:6px 6px 0 var(--oui);overflow:hidden;width:calc(100% - 6px);text-align:left;padding:11px 11px 0;transition:transform .36s cubic-bezier(.4,0,.7,.4),opacity .36s}
+.card.in{animation:in .28s ease-out}
+@keyframes in{from{transform:translateY(16px) scale(.97);opacity:0}}
+.card.oui{transform:translateX(120%) rotate(14deg);opacity:0}
+.card.bof{transform:translateY(-110%) rotate(-3deg);opacity:0}
+.card.non{transform:translateX(-120%) rotate(-14deg);opacity:0}
+.photo{position:relative;flex:1;min-height:170px;border-radius:3px;overflow:hidden}
+.photo svg,.photo img{position:absolute;inset:0;width:100%;height:100%;max-width:100%}
+.photo img{object-fit:cover}
+.sheet .photo img{object-fit:contain;background:var(--on-btn)}
+#card{cursor:pointer}
+#card:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.slides{position:absolute;inset:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.slides::-webkit-scrollbar{display:none}
+.slides img{position:static;flex:0 0 100%;width:100%;height:100%;scroll-snap-align:center}
+.fl{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:var(--surface);color:var(--ink);font-size:26px;line-height:1;padding:0}
+.fl.g{left:8px}.fl.d{right:8px}
+.dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:7px;pointer-events:none}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 1px var(--on-btn)}
+.dots i.on{background:var(--oui)}
+.lien{align-self:center;color:var(--bof);font-weight:700;font-size:18px;padding:6px 10px;text-underline-offset:3px}
+.tag{position:absolute;top:10px;left:10px;background:var(--surface);color:var(--ink);font-size:12px;font-weight:700;padding:4px 9px;border-radius:8px}
+.zoom{position:absolute;top:10px;right:10px;background:var(--surface);color:var(--ink);font-size:12px;font-weight:600;padding:4px 9px;border-radius:8px}
+.infos{padding:14px 16px 16px;display:grid;gap:3px}
+.infos b{font-size:18px;line-height:1.25}
+.price{font-family:var(--display);font-size:27px;color:var(--bof)}
+.place{font-size:14px;color:var(--muted)}
+.stamp{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%) rotate(-9deg);font-family:var(--display);font-size:46px;padding:6px 20px;border:4px solid var(--on-btn);border-radius:4px;box-shadow:5px 5px 0 var(--on-btn);color:var(--on-btn);white-space:nowrap}
+.choices{display:grid;grid-template-columns:1.15fr 1.15fr 1fr;gap:8px}
+.choice{min-height:68px;border-radius:18px;box-shadow:4px 4px 0 var(--ink);font-family:var(--display);font-size:24px;line-height:1.05;color:var(--on-btn);padding:6px;transition:transform .12s}
+.choice:active{transform:scale(.94)}
+.c-oui{background:var(--oui);color:var(--on-accent)}.c-bof{background:var(--bof)}.c-non{background:var(--non);font-size:22px}
+.back{align-self:center;color:var(--ink);font-size:14px;font-weight:600;padding:6px 10px;text-decoration:underline;text-underline-offset:3px}
+.group{display:grid;gap:9px;background:var(--surface);border:2px solid var(--line);border-radius:3px;padding:14px}
+.group h2{font-family:var(--display);font-weight:700;font-size:27px;margin:0;display:flex;align-items:center;gap:9px}
+.dot{width:22px;height:20px;clip-path:path("M11 19C4 13.5 1 10 1 6a5 5 0 0 1 10-1.5A5 5 0 0 1 21 6c0 4-3 7.5-10 13z")}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.mini{background:var(--soft);border-radius:4px;overflow:hidden;text-align:left;padding:6px 6px 0;display:flex;flex-direction:column}
+.mini .photo{flex:none;height:104px;min-height:0}
+.mini span{padding:8px 10px 10px;font-size:14px;line-height:1.25;font-weight:600}
+.mini em{display:block;font-style:normal;font-weight:400;color:var(--muted)}
+.empty{font-size:14px;color:var(--muted);margin:0}
+.done{background:var(--surface);border:2px solid var(--oui);border-radius:3px;box-shadow:6px 6px 0 var(--oui);padding:26px 20px;text-align:center;display:grid;gap:12px;justify-items:center}
+.done p{margin:0;color:var(--muted)}
+.cta{background:var(--oui);color:var(--on-accent);font-weight:700;font-size:18px;letter-spacing:.05em;text-transform:uppercase;padding:12px 22px;border-radius:4px;box-shadow:4px 4px 0 var(--ink)}
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;flex-direction:column}
+.sheet-in{max-width:460px;width:100%;margin:0 auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(18px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow:auto}
+.close{align-self:flex-end;font-weight:700;padding:6px 10px}
+.sheet .card{min-height:300px}
+.choice.on{box-shadow:0 0 0 3px var(--ink)}
+.reset{align-self:center;font-size:13px;color:var(--ink);text-decoration:underline;padding:4px}
+@media (prefers-reduced-motion:reduce){.card,.choice{transition:none}.card.in{animation:none}}
+</style>
+
+<div class="app">
+  <header>
+        <h1>Coucou ! J'ai repéré des trucs pour toi</h1>
+  </header>
+  <div class="tabs" role="tablist">
+    <button class="tab" id="t-trier" role="tab">À trier <span class="count" id="n-trier"></span></button>
+    <button class="tab" id="t-sel" role="tab">C'est mes choix ! <span class="count" id="n-sel"></span></button>
+  </div>
+  <main id="view"></main>
+</div>
+<div class="sheet" id="sheet" hidden></div>
+
+<script>
+const art={
+buffet:`<rect width="400" height="300" fill="#dfe9d8"/><rect y="235" width="400" height="65" fill="#c3d1b8"/><path d="M125 235l-9 34h12l9-34zM275 235l9 34h-12l-9-34z" fill="#6b4426"/><rect x="95" y="118" width="210" height="120" rx="6" fill="#a86f3c"/><rect x="106" y="129" width="90" height="98" rx="3" fill="#bf8549"/><rect x="204" y="129" width="90" height="98" rx="3" fill="#bf8549"/><circle cx="187" cy="178" r="4" fill="#5a3819"/><circle cx="213" cy="178" r="4" fill="#5a3819"/>`,
+velo:`<rect width="400" height="300" fill="#f6dfd0"/><rect y="238" width="400" height="62" fill="#e3c1aa"/><g fill="none" stroke="#2c3e63" stroke-width="7"><circle cx="122" cy="198" r="50"/><circle cx="280" cy="198" r="50"/></g><g fill="none" stroke="#2f8f83" stroke-width="9" stroke-linecap="round"><path d="M122 198l48-74h82l28 74M170 124l28 74 54-74M198 198h-76M252 124l-10-32h-26M170 124l-8-20"/></g><path d="M144 102h38" stroke="#2c3e63" stroke-width="11" stroke-linecap="round"/>`,
+lampe:`<rect width="400" height="300" fill="#ddd8f5"/><rect y="240" width="400" height="60" fill="#c0b9e4"/><ellipse cx="200" cy="246" rx="58" ry="11" fill="#e88f3b"/><path d="M186 150h28l10 96h-48z" fill="#f2a95d"/><path d="M112 156c0-60 40-96 88-96s88 36 88 96c0 7-5 10-11 10H123c-6 0-11-3-11-10z" fill="#e88f3b"/>`,
+fauteuil:`<rect width="400" height="300" fill="#d3ecea"/><rect y="240" width="400" height="60" fill="#afd6d3"/><path d="M125 70h150c15 0 24 9 24 24v92H101V94c0-15 9-24 24-24z" fill="#c99a56"/><rect x="85" y="150" width="230" height="58" rx="22" fill="#d9ae6c"/><rect x="118" y="134" width="164" height="44" rx="18" fill="#f3efe4"/><path d="M116 208l-12 52M284 208l12 52" stroke="#8a6230" stroke-width="10" stroke-linecap="round"/>`,
+miroir:`<rect width="400" height="300" fill="#fbe5ae"/><g stroke="#c4871e" stroke-width="7" stroke-linecap="round"><path d="M200 34v34M200 232v34M84 150h34M282 150h34M118 68l24 24M258 208l24 24M282 68l-24 24M142 208l-24 24"/></g><circle cx="200" cy="150" r="74" fill="#c4871e"/><circle cx="200" cy="150" r="62" fill="#c7e6f2"/><path d="M168 176l52-62M190 190l42-50" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>`};
+const ADS=[
+{id:"r1",imgs:["annonces/paravents-1.png","annonces/paravents-2.png","annonces/paravents-3.png"],title:"Paravents en bois rouge",price:"30 € le paravent",place:"Saint-Sulpice-la-Pointe · 2 disponibles, 2,01 m de haut, 30 cm de large par panneau",url:"https://www.leboncoin.fr/ad/ameublement/3290841129"},
+{id:"r2",imgs:["annonces/miroirs-1.png","annonces/miroirs-2.png","annonces/miroirs-3.png"],title:"Miroirs en bois, doré et noir",price:"55 € pièce, 100 € les deux",place:"Saint-Lieux-lès-Lavaur · doré 154×92 cm, noir 109×88 cm",url:"https://www.leboncoin.fr/ad/ameublement/3293555432"},
+{id:"r3",imgs:["annonces/miroir-dore-1.png","annonces/miroir-dore-2.png","annonces/miroir-dore-3.png"],title:"Miroir mural, cadre doré sculpté",price:"60 €",place:"Lavaur · 70×100 cm, très bon état",url:"https://www.leboncoin.fr/ad/decoration/3298869554"},
+{id:"r4",imgs:["annonces/miroir-bois-1.png","annonces/miroir-bois-2.png"],title:"Grand miroir mural en bois",price:"60 €",place:"Peyrole · 104×135 cm, très bon état",url:"https://www.leboncoin.fr/ad/decoration/3304779300"},
+{id:"r5",imgs:["annonces/chaises-1.png","annonces/chaises-2.png"],title:"6 chaises en velours bleu + 2 tabourets de bar",price:"70 € le lot",place:"Saint-Sulpice-la-Pointe · marque But, bon état",url:"https://www.leboncoin.fr/ad/ameublement/3302734821"},
+{id:"r6",imgs:["annonces/chaises-scandi-1.png","annonces/chaises-scandi-2.png","annonces/chaises-scandi-3.png"],title:"4 chaises scandinaves neuves, assise beige",price:"59 € le lot",place:"Caraman · encore emballées, pieds couleur bois",url:"https://www.leboncoin.fr/ad/ameublement/3300094033"},
+{id:"r7",imgs:["annonces/frigo-1.png","annonces/frigo-2.png","annonces/frigo-3.png"],title:"Réfrigérateur congélateur gris",price:"80 €",place:"Missècle · 1,41 m de haut, 54,5 de large, 54,2 de profondeur, bon état",url:"https://www.leboncoin.fr/ad/electromenager/3294280307"},
+{id:"r8",imgs:["annonces/frigo-blanc-1.png"],title:"Réfrigérateur combiné blanc, 5 mois",price:"145 €",place:"Flourens · 230 L, classe A++, No Frost, état neuf",url:"https://www.leboncoin.fr/ad/electromenager/3297589121"},
+{id:"r9",imgs:["annonces/rideaux-1.png"],title:"2 rideaux jaunes à œillets",price:"10 € les deux",place:"Gaillac · 140×240, neufs",url:"https://www.leboncoin.fr/ad/linge_de_maison/3295705067"},
+{id:"r10",imgs:["annonces/rideaux-rayes-1.png","annonces/rideaux-rayes-2.png","annonces/rideaux-rayes-3.png"],title:"Rideaux à rayures rose, vert et blanc, avec embrasses",price:"20 €",place:"Marzens · 100 % coton, très bon état",url:"https://www.leboncoin.fr/ad/decoration/3274183822"},
+{id:"r11",imgs:["annonces/bibliotheque-1.png","annonces/bibliotheque-2.png"],title:"Bibliothèque de rangement en bois",price:"90 €",place:"Saint-Sulpice-la-Pointe · 100 de large, 165 de haut, bon état, non démontable",url:"https://www.leboncoin.fr/ad/ameublement/3294856150"},
+{id:"r12",imgs:["annonces/terrasse-1.png","annonces/terrasse-2.png","annonces/terrasse-3.png"],title:"Ensemble de terrasse en bois, Ikea",price:"100 € le lot",place:"Gaillac · bon état",url:"https://www.leboncoin.fr/ad/ameublement/3279585186"},
+{id:"r13",imgs:["annonces/table-ronde-1.png","annonces/table-ronde-2.png"],title:"Table ronde et 4 chaises jaunes",price:"20 € le lot",place:"Buzet-sur-Tarn · quelques éclats sur la table",url:"https://www.leboncoin.fr/ad/ameublement/3277281131"},
+{id:"r14",imgs:["annonces/chaises-transparentes-1.png"],title:"6 chaises transparentes, pieds en bois",price:"80 € le lot",place:"Giroussens · très bon état",url:"https://www.leboncoin.fr/ad/ameublement/3304388091"},
+{id:"r15",imgs:["annonces/chaises-bistrot-1.png","annonces/chaises-bistrot-2.png","annonces/chaises-bistrot-3.png"],title:"Pour dehors : 4 chaises bistrot en métal rouge",price:"55 € le lot",place:"Garidech · empilables, quelques points de rouille derrière le dossier",url:"https://www.leboncoin.fr/ad/ameublement/3288087631"},
+{id:"r16",imgs:["annonces/meuble-chaussures-1.png","annonces/meuble-chaussures-2.png","annonces/meuble-chaussures-3.png"],title:"Meuble à chaussures blanc Ikea Brusali",price:"55 €, négociable",place:"Rabastens · 61×30×130 cm, bon état, quelques petits éclats",url:"https://www.leboncoin.fr/ad/ameublement/3301661315"},
+{id:"r17",imgs:["annonces/banc-entree-1.png","annonces/banc-entree-2.png","annonces/banc-entree-3.png"],title:"Meuble d'entrée en bois avec banc, La Redoute",price:"25 €",place:"Sainte-Foy-d'Aigrefeuille · porte sous le banc cassée mais réparable",url:"https://www.leboncoin.fr/ad/ameublement/3296188325"},
+{id:"derniere",imgs:["annonces/derniere-2.jpg"],title:"La dernière trouvaille",price:"2 €",place:"Lavaur · 187 cm"}];
+const LABEL={oui:"Oui !",bof:"Peut-être !",non:"Pas foufou"};
+const COLOR={oui:"var(--oui)",bof:"var(--bof)",non:"var(--non)"};
+const KEY="choix-annonces-v1";
+const API="https://zhhcvkzxlmcylakqgbuu.supabase.co/rest/v1/choix_annonces";
+const CLE="sb_publishable_Bh515rwNo1j3p8aosFfGaQ_S77_LDcG";
+const HD={apikey:CLE,"Content-Type":"application/json"};
+let attente={},envoi=false,relance=false;
+try{attente=JSON.parse(localStorage.getItem(KEY+"-attente")||"{}")}catch(e){}
+let choices={},order=[],view="trier",busy=false;
+try{const s=JSON.parse(localStorage.getItem(KEY)||"{}");choices=s.choices||{};order=s.order||[]}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({choices,order}));localStorage.setItem(KEY+"-attente",JSON.stringify(attente))}catch(e){}};
+const $=id=>document.getElementById(id);
+const photo=(a,extra="",swipe=false)=>{
+  if(!a.imgs)return `<div class="photo"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${art[a.art]}</svg>${extra}</div>`;
+  if(!swipe||a.imgs.length<2)return `<div class="photo"><img src="${a.imgs[0]}" alt="Photo de l'annonce">${extra}</div>`;
+  return `<div class="photo"><div class="slides">${a.imgs.map((s,i)=>`<img src="${s}" alt="Photo ${i+1} de l'annonce" draggable="false">`).join("")}</div><button class="fl g" data-d="-1" aria-label="Photo précédente">‹</button><button class="fl d" data-d="1" aria-label="Photo suivante">›</button><div class="dots">${a.imgs.map(()=>"<i></i>").join("")}</div>${extra}</div>`;
+};
+function wire(root){root.querySelectorAll(".slides").forEach(s=>{
+  const p=s.parentNode,dots=[...p.querySelectorAll(".dots i")];
+  const up=()=>{const i=Math.round(s.scrollLeft/(s.clientWidth||1));dots.forEach((d,k)=>d.classList.toggle("on",k===i))};
+  s.addEventListener("scroll",up,{passive:true});up();
+  p.querySelectorAll(".fl").forEach(b=>b.onclick=e=>{e.stopPropagation();s.scrollBy({left:b.dataset.d*s.clientWidth,behavior:"smooth"})});
+})}
+const buttons=(cur)=>`<div class="choices">${Object.keys(LABEL).map(k=>`<button class="choice c-${k}${cur===k?" on":""}" data-c="${k}">${LABEL[k]}</button>`).join("")}</div>`;
+const infos=a=>`<div class="infos"><b>${a.title}</b><div class="price">${a.price}</div><div class="place">${a.place}</div></div>`;
+function render(){
+  const todo=ADS.filter(a=>!choices[a.id]);
+  $("n-trier").textContent="("+todo.length+")";
+  $("n-sel").textContent="("+(ADS.length-todo.length)+")";
+  $("t-trier").setAttribute("aria-selected",view==="trier");
+  $("t-sel").setAttribute("aria-selected",view==="sel");
+  view==="trier"?renderTri(todo):renderSel();
+}
+function renderTri(todo){
+  const cur=todo[0];
+  const pips=`<div class="pips" aria-label="${ADS.length-todo.length} annonces triées sur ${ADS.length}">${ADS.map(a=>`<span class="pip ${choices[a.id]||(cur&&a.id===cur.id?"now":"")}"></span>`).join("")}</div>`;
+  const back=order.length?`<button class="back" id="back">Revenir à la précédente</button>`:"";
+  if(!cur){
+    $("view").innerHTML=pips+`<div class="done"><h1>Tout est trié !</h1><p>Tu peux encore changer d'avis dans « C'est mes choix ! ».</p><button class="cta" id="see">Voir mes choix</button></div>`+back;
+    $("see").onclick=()=>{view="sel";render()};
+  }else{
+    $("view").innerHTML=pips+`<div class="card in" id="card" role="button" tabindex="0" aria-label="Agrandir l'annonce">${photo(cur,(cur.imgs?'':'<span class="tag">Exemple</span>')+'<span class="zoom">Toucher pour agrandir</span>',true)}${infos(cur)}</div>`+buttons();
+    $("view").insertAdjacentHTML("beforeend",back);
+    $("card").onclick=()=>openSheet(cur,true);
+    $("card").onkeydown=e=>{if(e.key==="Enter"&&e.target.id==="card")openSheet(cur,true)};
+    wire($("view"));
+    document.querySelectorAll("#view .choice").forEach(b=>b.onclick=()=>pick(cur,b.dataset.c));
+  }
+  if($("back"))$("back").onclick=()=>{const id=order.pop();delete choices[id];noter(id,null);render()};
+}
+function pick(a,c){
+  if(busy)return;busy=true;
+  const card=$("card");
+  card.insertAdjacentHTML("beforeend",`<span class="stamp" style="background:${COLOR[c]}">${LABEL[c]}</span>`);
+  setTimeout(()=>card.classList.add(c),170);
+  setTimeout(()=>{choices[a.id]=c;order=order.filter(x=>x!==a.id);order.push(a.id);noter(a.id,c);busy=false;render()},540);
+}
+function renderSel(){
+  const groups=Object.keys(LABEL).map(k=>{
+    const list=ADS.filter(a=>choices[a.id]===k);
+    return `<section class="group"><h2><span class="dot" style="background:${COLOR[k]}"></span>${LABEL[k]} <span class="count">${list.length}</span></h2>${list.length?`<div class="grid">${list.map(a=>`<button class="mini" data-id="${a.id}">${photo(a)}<span>${a.title}<em>${a.price}</em></span></button>`).join("")}</div>`:`<p class="empty">Rien ici pour l'instant.</p>`}</section>`;
+  }).join("");
+  $("view").innerHTML=groups;
+  document.querySelectorAll(".mini").forEach(b=>b.onclick=()=>openSheet(ADS.find(a=>a.id===b.dataset.id),false));
+}
+function openSheet(a,zoomOnly){
+  const s=$("sheet");
+  s.innerHTML=`<div class="sheet-in"><button class="close" id="close">Fermer</button><div class="card">${photo(a,a.imgs?'':'<span class="tag">Exemple</span>',true)}${infos(a)}</div>${a.url?`<a class="lien" href="${a.url}" target="_blank" rel="noopener">Voir l'annonce complète</a>`:""}${zoomOnly?"":buttons(choices[a.id])}</div>`;
+  s.hidden=false;
+  wire(s);
+  $("close").onclick=()=>{s.hidden=true};
+  s.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{choices[a.id]=b.dataset.c;noter(a.id,b.dataset.c);s.hidden=true;render()});
+}
+$("t-trier").onclick=()=>{view="trier";render()};
+$("t-sel").onclick=()=>{view="sel";render()};
+render();
+
+const etat=document.createElement("div");etat.className="etat";etat.setAttribute("role","status");etat.hidden=true;
+etat.textContent="Pas de réseau : ton choix partira dès que ça revient.";document.body.appendChild(etat);
+function montre(){etat.hidden=!Object.keys(attente).length}
+function noter(id,c){attente[id]=c;save();if(envoi)relance=true;else flush()}
+async function flush(){
+  if(envoi)return;envoi=true;
+  try{
+    for(const id of Object.keys(attente)){
+      const c=attente[id];
+      const r=c
+        ?await fetch(API+"?on_conflict=annonce_id",{method:"POST",headers:{...HD,Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({annonce_id:id,choix:c,maj_le:new Date().toISOString()})})
+        :await fetch(API+"?annonce_id=eq."+encodeURIComponent(id),{method:"DELETE",headers:HD});
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      if(attente[id]===c)delete attente[id];
+    }
+  }catch(e){}
+  envoi=false;save();montre();
+  if(relance){relance=false;flush()}
+}
+const empreinte=o=>JSON.stringify(Object.keys(o).sort().map(k=>[k,o[k]]));
+async function charge(){
+  try{
+    const r=await fetch(API+"?select=annonce_id,choix",{headers:HD});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const n={};
+    (await r.json()).forEach(x=>{if(ADS.some(a=>a.id===x.annonce_id))n[x.annonce_id]=x.choix});
+    for(const id in attente){if(attente[id])n[id]=attente[id];else delete n[id]}
+    if(empreinte(n)!==empreinte(choices)){
+      choices=n;order=order.filter(id=>n[id]);Object.keys(n).forEach(id=>{if(!order.includes(id))order.push(id)});save();
+      if(!busy&&$("sheet").hidden)render();
+    }
+  }catch(e){}
+}
+window.addEventListener("online",flush);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")flush().then(charge)});
+flush().then(charge);
+</script>
