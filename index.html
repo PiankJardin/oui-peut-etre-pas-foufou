@@ -30,7 +30,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .note{font-size:13px;color:var(--muted);text-align:center;background:var(--surface);border-radius:4px;padding:6px 10px;margin:0}
 h1{font-family:var(--display);font-weight:700;font-size:29px;line-height:1.1;margin:0;padding:11px 34px;text-wrap:balance;text-align:center;background:var(--oui);color:var(--on-accent);clip-path:polygon(0 0,100% 0,calc(100% - 16px) 50%,100% 100%,0 100%,16px 50%)}
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--surface);border:2px solid var(--oui);border-radius:4px;padding:4px}
-.tab{padding:9px 8px;border-radius:2px;font-weight:700;font-size:17px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tab{padding:9px 8px;border-radius:2px;font-weight:700;font-size:clamp(14px,4.2vw,17px);letter-spacing:.03em;text-transform:uppercase;color:var(--muted)}
 .tab[aria-selected="true"]{background:var(--oui);color:var(--on-accent)}
 .count{font-variant-numeric:tabular-nums}
 #view{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0}
@@ -67,9 +67,9 @@ h1{font-family:var(--display);font-weight:700;font-size:29px;line-height:1.1;mar
 .place{font-size:14px;color:var(--muted)}
 .stamp{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%) rotate(-9deg);font-family:var(--display);font-size:46px;padding:6px 20px;border:4px solid var(--on-btn);border-radius:4px;box-shadow:5px 5px 0 var(--on-btn);color:var(--on-btn);white-space:nowrap}
 .choices{display:grid;grid-template-columns:1.15fr 1.15fr 1fr;gap:8px}
-.choice{min-height:68px;border-radius:18px;box-shadow:4px 4px 0 var(--ink);font-family:var(--display);font-size:24px;line-height:1.05;color:var(--on-btn);padding:6px;transition:transform .12s}
+.choice{min-height:68px;border-radius:18px;box-shadow:4px 4px 0 var(--ink);font-family:var(--display);font-size:clamp(18px,5.4vw,24px);line-height:1.05;color:var(--on-btn);padding:6px;transition:transform .12s}
 .choice:active{transform:scale(.94)}
-.c-oui{background:var(--oui);color:var(--on-accent)}.c-bof{background:var(--bof)}.c-non{background:var(--non);font-size:22px}
+.c-oui{background:var(--oui);color:var(--on-accent)}.c-bof{background:var(--bof)}.c-non{background:var(--non);font-size:clamp(17px,5vw,22px)}
 .back{align-self:center;color:var(--ink);font-size:14px;font-weight:600;padding:6px 10px;text-decoration:underline;text-underline-offset:3px}
 .group{display:grid;gap:9px;background:var(--surface);border:2px solid var(--line);border-radius:3px;padding:14px}
 .group h2{font-family:var(--display);font-weight:700;font-size:27px;margin:0;display:flex;align-items:center;gap:9px}
@@ -130,7 +130,7 @@ const ADS=[
 {id:"r16",imgs:["annonces/meuble-chaussures-1.png","annonces/meuble-chaussures-2.png","annonces/meuble-chaussures-3.png"],title:"Meuble à chaussures blanc Ikea Brusali",price:"55 €, négociable",place:"Rabastens · 61×30×130 cm, bon état, quelques petits éclats",url:"https://www.leboncoin.fr/ad/ameublement/3301661315"},
 {id:"r17",imgs:["annonces/banc-entree-1.png","annonces/banc-entree-2.png","annonces/banc-entree-3.png"],title:"Meuble d'entrée en bois avec banc, La Redoute",price:"25 €",place:"Sainte-Foy-d'Aigrefeuille · porte sous le banc cassée mais réparable",url:"https://www.leboncoin.fr/ad/ameublement/3296188325"},
 {id:"derniere",imgs:["annonces/derniere-2.jpg"],title:"La dernière trouvaille",price:"2 €",place:"Lavaur · 187 cm"}];
-const LABEL={oui:"Oui !",bof:"Peut-être !",non:"Pas foufou"};
+const LABEL={oui:"Oui !",bof:"Peut-être !",non:"Pas foufou"};
 const COLOR={oui:"var(--oui)",bof:"var(--bof)",non:"var(--non)"};
 const KEY="choix-annonces-v1";
 const API="https://zhhcvkzxlmcylakqgbuu.supabase.co/rest/v1/choix_annonces";
