@@ -154,7 +154,7 @@ function wire(root){root.querySelectorAll(".slides").forEach(s=>{
   const p=s.parentNode,dots=[...p.querySelectorAll(".dots i")];
   const up=()=>{const i=Math.round(s.scrollLeft/(s.clientWidth||1));dots.forEach((d,k)=>d.classList.toggle("on",k===i))};
   s.addEventListener("scroll",up,{passive:true});up();
-  p.querySelectorAll(".fl").forEach(b=>b.onclick=e=>{e.stopPropagation();s.scrollBy({left:b.dataset.d*s.clientWidth,behavior:"smooth"})});
+  p.querySelectorAll(".fl").forEach(b=>b.onclick=e=>{e.stopPropagation();const l=s.clientWidth||1,i=Math.max(0,Math.min(dots.length-1,Math.round(s.scrollLeft/l)+Number(b.dataset.d))),t=i*l;s.scrollTo({left:t,behavior:"smooth"});setTimeout(()=>{if(Math.abs(s.scrollLeft-t)>2)s.scrollLeft=t;up()},450)});
 })}
 const buttons=(cur)=>`<div class="choices">${Object.keys(LABEL).map(k=>`<button class="choice c-${k}${cur===k?" on":""}" data-c="${k}">${LABEL[k]}</button>`).join("")}</div>`;
 const infos=a=>`<div class="infos"><b>${a.title}</b><div class="price">${a.price}</div><div class="place">${a.place}</div></div>`;
