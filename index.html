@@ -185,6 +185,7 @@ function renderTri(todo){
 }
 function pick(a,c){
   if(busy)return;busy=true;
+  if(c==="oui")paillettes();
   const card=$("card");
   card.insertAdjacentHTML("beforeend",`<span class="stamp" style="background:${COLOR[c]}">${LABEL[c]}</span>`);
   setTimeout(()=>card.classList.add(c),170);
@@ -205,7 +206,7 @@ function openSheet(a,zoomOnly){
   s.hidden=false;
   wire(s);
   $("close").onclick=()=>{s.hidden=true};
-  s.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{choices[a.id]=b.dataset.c;noter(a.id,b.dataset.c);s.hidden=true;render()});
+  s.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{choices[a.id]=b.dataset.c;noter(a.id,b.dataset.c);s.hidden=true;render();if(b.dataset.c==="oui")paillettes()});
 }
 $("t-trier").onclick=()=>{view="trier";render()};
 $("t-sel").onclick=()=>{view="sel";render()};
@@ -247,4 +248,91 @@ async function charge(){
 window.addEventListener("online",flush);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")flush().then(charge)});
 flush().then(charge);
+function toile(){
+  let c=document.getElementById("paillettes");
+  if(!c){c=document.createElement("canvas");c.id="paillettes";c.setAttribute("aria-hidden","true");c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40";document.body.appendChild(c)}
+  const dpr=Math.min(window.devicePixelRatio||1,2);c.width=innerWidth*dpr;c.height=innerHeight*dpr;
+  const x=c.getContext("2d");x.setTransform(dpr,0,0,dpr,0,0);return x;
+}
+function jouer(duree,dessin){
+  cancelAnimationFrame(jouer.id);
+  const x=toile(),W=innerWidth,H=innerHeight,t0=performance.now();let av=t0;
+  function im(t){
+    const e=Math.min(t-t0,duree),d=Math.min(3,(t-av)/16.67);av=t;
+    x.clearRect(0,0,W,H);x.globalCompositeOperation="source-over";x.globalAlpha=1;x.shadowBlur=0;x.setLineDash([]);
+    dessin(x,e/duree,d,W,H);
+    if(e<duree)jouer.id=requestAnimationFrame(im);else x.clearRect(0,0,W,H);
+  }
+  jouer.id=requestAnimationFrame(im);
+}
+function cadre(){
+  return (x,p,d,W,H)=>{
+    const prog=Math.min(1,p/.5),fin=p>.65?(1-p)/.35:1;
+    const g=x.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.75);
+    g.addColorStop(0,"rgba(255,190,70,0)");g.addColorStop(1,"rgba(255,190,70,.3)");
+    x.globalAlpha=fin*Math.min(1,p*3);x.fillStyle=g;x.fillRect(0,0,W,H);
+    const trace=(m,lw,al)=>{
+      const w=W-2*m,h2=H-2*m,moitie=w+h2,lg=moitie*prog;
+      const dor=x.createLinearGradient(0,0,W,H);dor.addColorStop(0,"#fff3c4");dor.addColorStop(.5,"#e0ad38");dor.addColorStop(1,"#fbe7a0");
+      x.globalAlpha=fin*al;x.strokeStyle=dor;x.lineWidth=lw;x.shadowColor="#ffcf5c";x.shadowBlur=14;x.setLineDash([lg,moitie*2]);
+      x.beginPath();x.moveTo(W/2,m);x.lineTo(W-m,m);x.lineTo(W-m,H-m);x.lineTo(W/2,H-m);x.stroke();
+      x.beginPath();x.moveTo(W/2,m);x.lineTo(m,m);x.lineTo(m,H-m);x.lineTo(W/2,H-m);x.stroke();
+    };
+    trace(9,2,1);trace(16,1,.55);
+  };
+}
+function luxe(W,H){
+  const h=(a,b)=>a+Math.random()*(b-a),R=[[66,40,4],[146,98,16],[214,160,38],[248,212,104],[255,251,226]];
+  const ramp=v=>{v=Math.max(0,Math.min(.999,v))*4;const i=Math.floor(v),f=v-i,a=R[i],b=R[i+1];return "rgb("+a.map((c,j)=>Math.round(c+(b[j]-c)*f)).join(",")+")"};
+  const carre=(a,b,vy,c)=>({x:h(-20,W+20),y:h(-H*.8,-15),vy,a,b,rx:h(0,6.28),ry:h(0,6.28),rz:h(0,6.28),vx:h(.07,.2)*(Math.random()<.5?-1:1),vyr:h(.08,.22)*(Math.random()<.5?-1:1),vz:h(-.05,.05),ph:h(0,6.28),c});
+  const loin=Array.from({length:70},()=>{const s=h(1.6,3.6);return carre(s,s*h(.6,1.2),h(2.8,4.2),.75)});
+  const milieu=Array.from({length:155},()=>{const s=h(3.6,9.5);return carre(s,s*h(.45,1.05),h(4.2,7),1)});
+  const rubans=Array.from({length:0},(_,i)=>{
+    const n=72,t0=Math.floor(h(0,3)),S=i<3?h(86,120):h(38,76),pts=[];
+    for(let j=0;j<=n;j++){const t=j/n;let px,py;
+      if(t0===0){const a=-2.5+t*(3.8+h(0,.0));px=Math.cos(a)*.72;py=Math.sin(a)*.72}
+      else if(t0===1){px=-.85+t*1.7;py=Math.sin(t*7.2)*.42}
+      else{const a=t*12.4,r=.12+t*.45;px=Math.cos(a)*r+(t-.5)*.75;py=Math.sin(a)*r*.75+(t-.5)*.4}
+      pts.push([px*S,py*S])}
+    return{x:h(-10,W+10),y:h(-H*.75,-30),vy:h(3.3,5.8),r:h(0,6.28),vr:h(-.022,.022),ph:h(0,6.28),k:h(6,12),L:i<3?h(5,7.5):h(2.6,4.8),pts}});
+  const Lx=.32,Ly=-.48,Lz=.82;let T=0;
+  function quad(x,q,d,fin){
+    q.y+=q.vy*d;q.x+=Math.sin(q.ph+T*.05)*.9*d;q.rx+=q.vx*d;q.ry+=q.vyr*d;q.rz+=q.vz*d;
+    if(q.y<-30||q.y>H+30)return;
+    const cx=Math.cos(q.rx),sx=Math.sin(q.rx),cy=Math.cos(q.ry),sy=Math.sin(q.ry),cz=Math.cos(q.rz),sz=Math.sin(q.rz);
+    const ux=cy*cz,uy=cy*sz,uz=-sy,vx=sx*sy*cz-cx*sz,vy=sx*sy*sz+cx*cz,vz=sx*cy;
+    const nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx,l=Math.abs(nx*Lx+ny*Ly+nz*Lz),v=.14+.86*Math.pow(l,2.4);
+    const a=q.a,b=q.b,g=x.createLinearGradient(q.x-ux*a-vx*b,q.y-uy*a-vy*b,q.x+ux*a+vx*b,q.y+uy*a+vy*b);
+    g.addColorStop(0,ramp(v*.62));g.addColorStop(.48,ramp(Math.min(1,v+.34)));g.addColorStop(1,ramp(v*.5));
+    x.globalAlpha=fin*q.c;x.fillStyle=g;x.beginPath();
+    x.moveTo(q.x-ux*a-vx*b,q.y-uy*a-vy*b);x.lineTo(q.x+ux*a-vx*b,q.y+uy*a-vy*b);x.lineTo(q.x+ux*a+vx*b,q.y+uy*a+vy*b);x.lineTo(q.x-ux*a+vx*b,q.y-uy*a+vy*b);x.closePath();x.fill();
+  }
+  function ruban(x,q,d,fin){
+    q.y+=q.vy*d;q.x+=Math.sin(q.ph+T*.03)*.7*d;q.r+=q.vr*d;
+    if(q.y<-160||q.y>H+160)return;
+    x.save();x.translate(q.x,q.y);x.rotate(q.r);x.globalAlpha=fin;x.lineJoin="round";
+    const n=q.pts.length-1;
+    for(let i=0;i<n;i++){
+      const p=q.pts[i],s=q.pts[i+1],dx=s[0]-p[0],dy=s[1]-p[1],l=Math.hypot(dx,dy)||1,nx=-dy/l,ny=dx/l,t=i/n;
+      const tw=Math.cos(t*q.k+T*.11+q.ph),e=Math.abs(tw),w=q.L*(.14+.86*e);
+      const v=(tw>0?.3+.7*Math.pow(e,1.6):.08+.32*e)*(.82+.18*(nx*Lx+ny*Ly+1));
+      x.fillStyle=x.strokeStyle=ramp(v);x.lineWidth=1.1;x.beginPath();
+      x.moveTo(p[0]+nx*w,p[1]+ny*w);x.lineTo(s[0]+nx*w,s[1]+ny*w);x.lineTo(s[0]-nx*w,s[1]-ny*w);x.lineTo(p[0]-nx*w,p[1]-ny*w);x.closePath();x.fill();x.stroke();
+    }
+    x.restore();
+  }
+  return (x,p,d)=>{
+    T+=d;const fin=p>.84?(1-p)/.16:1,voile=Math.min(1,p/.1)*(p>.8?(1-p)/.2:1);
+    x.globalAlpha=voile*.34;x.fillStyle="#0a0507";x.fillRect(0,0,W,H);
+    for(const q of loin)quad(x,q,d,fin);
+    for(const q of milieu)quad(x,q,d,fin);
+    x.globalAlpha=1;
+  };
+}
+
+function paillettes(){
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const f=luxe(innerWidth,innerHeight),c=cadre();
+  jouer(2600,(x,p,d,W,H)=>{c(x,Math.min(1,p*1.73),d,W,H);x.shadowBlur=0;x.setLineDash([]);x.globalAlpha=1;f(x,p,d)});
+}
 </script>
